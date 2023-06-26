@@ -1,4 +1,5 @@
 ---
+
   - name: install the mysql-server
     apt:
       name: mysql-server

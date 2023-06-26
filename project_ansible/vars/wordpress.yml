@@ -1,0 +1,4 @@
+---
+
+server_name: "project.my"
+mysql_db: "wordpress"
