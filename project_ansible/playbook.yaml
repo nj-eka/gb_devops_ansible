@@ -38,3 +38,10 @@
     - vars/wordpress_vault.yml
   roles:
     - { role: mysql, tags: [mysql] }
+
+  post_tasks:
+  - name: restart mysql
+    systemd:
+      name: mysql
+      state: restarted
+      enabled: true

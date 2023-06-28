@@ -22,7 +22,16 @@
   - name: replace wp-config
     template:
       src: wp-config.php.j2
-      dest: /var/www/{{ server_name }}/wordpress/wp-config.php.j2
+      dest: /var/www/{{ server_name }}/wordpress/wp-config.php
       owner: www-data
       group: www-data
       mode: 0755
+
+  - name: install the mysql-client, php-mysql
+    apt:
+      name: "{{ item }}"
+      update_cache: true
+      state: latest
+    with_items:
+      - "php-mysql"
+      - "mysql-client"
