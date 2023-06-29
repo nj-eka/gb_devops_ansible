@@ -1,0 +1,7 @@
+---
+
+  - name: restart php
+    systemd:
+      name: php7.4-fpm
+      state: restarted
+      enabled: true
