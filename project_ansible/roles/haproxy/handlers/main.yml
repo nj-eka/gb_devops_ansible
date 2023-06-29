@@ -1,0 +1,7 @@
+---
+
+  - name: reload haproxy
+    service:
+      name: haproxy
+      enabled: true
+      state: reloaded

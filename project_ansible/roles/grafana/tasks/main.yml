@@ -1,0 +1,60 @@
+---
+
+- name: install gpg
+  apt:
+    name: gnupg,software-properties-common,apt-transport-https
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+#  apt_key:
+#    url: "https://apt.grafana.com/gpg.key"
+#    keyring: "/usr/share/keyrings/grafana.key"
+#    validate_certs: no
+
+#- name: add repository
+#  apt_repository:
+#    repo: "deb [signed-by=/usr/share/keyrings/grafana.key] https://packages.grafana.com stable main"
+#    state: present
+##    validate_certs: no
+
+#- name: install grafana
+#  apt:
+#    name: grafana
+#    state: latest
+#    update_cache: false
+#    cache_valid_time: 3600
+
+- name: copy grafana deb to tmp
+  copy:
+    src: files/{{ grafana_deb }}
+    dest: /tmp/
+
+- name: install grafana
+  apt:
+    deb: /tmp/{{ grafana_deb }}
+
+- name: clean tmp
+  file:
+    path: /tmp/{{ grafana_deb }}
+    state: absent
+
+- name: start service grafana-server
+  systemd:
+    name: grafana-server
+    state: started
+    enabled: true
+
+- name: wait for service up
+  uri:
+    url: "http://127.0.0.1:3000"
+    status_code: 200
+  register: __result
+  until: __result.status == 200
+  retries: 120
+  delay: 1
+
+- name: change admin password for grafana gui
+  shell : "grafana-cli admin reset-admin-password {{ grafana_admin_password }}"
+  register: __command_admin
+  changed_when: __command_admin.rc !=0

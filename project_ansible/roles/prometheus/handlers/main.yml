@@ -1,0 +1,15 @@
+---
+
+- name: restart_prometheus
+  systemd:
+    name: prometheus
+    state: restarted
+    enabled: true
+    daemon_reload: true
+
+- name: reload_prometheus
+  uri:
+    url: http://localhost:9090/-/reload
+#    attr: web.enable-lifecycle
+    method: POST
+    status_code: 200

@@ -18,19 +18,6 @@
     - { role: php, tags: [php] }
     - { role: wordpress, tags: [wordpress] }
 
-  post_tasks:
-  - name: restart php
-    systemd:
-      name: php7.4-fpm
-      state: restarted
-      enabled: true
-
-  - name: restart nginx
-    systemd:
-      name: nginx
-      state: restarted
-      enabled: true
-
 - hosts: database
   become: true
   vars_files:
@@ -39,9 +26,25 @@
   roles:
     - { role: mysql, tags: [mysql] }
 
-  post_tasks:
-  - name: restart mysql
-    systemd:
-      name: mysql
-      state: restarted
-      enabled: true
+- hosts: haproxy
+  become: true
+  roles:
+    - { role: haproxy, tags: [haproxy] }
+
+- name: install monitoring stack
+  hosts: monitoring
+  become: true
+  vars_files:
+    - vars/wordpress_vault.yml
+  roles:
+    - { role: prometheus, tags: [prometheus] }
+    - { role: grafana, tags: [grafana] }
+
+- name: install node-exporter
+  hosts:
+    - wordpress
+    - database
+    - haproxy
+  become: true
+  roles:
+    - { role: node-exporter, tags: [node-exporter] }

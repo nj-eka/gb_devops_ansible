@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider :libvirt do |vb|
     vb.driver = "qemu"
     vb.memory = 2048
-    vb.cpus = 1
+    vb.cpus = 2
     vb.qemu_use_session = false
   end
 
